@@ -8,3 +8,5 @@
 int		haiku_link(const char *toPath, const char *path);
 
 int		haiku_unlink(const char *name);
+
+int haiku_copy_file(const char *source_file, const char *target_file);

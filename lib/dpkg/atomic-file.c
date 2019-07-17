@@ -31,6 +31,7 @@
 #include <dpkg/i18n.h>
 #include <dpkg/dpkg.h>
 #include <dpkg/atomic-file.h>
+#include "haiku_link.h"
 
 #define ATOMIC_FILE_NEW_EXT "-new"
 #define ATOMIC_FILE_OLD_EXT "-old"
@@ -88,10 +89,17 @@ atomic_file_backup(struct atomic_file *file)
 
 	name_old = str_fmt("%s%s", file->name, ATOMIC_FILE_OLD_EXT);
 
+#ifdef __HAIKU__
+	if (haiku_unlink(name_old) && errno != ENOENT)
+		ohshite(_("error removing old backup file '%s'"), name_old);
+	if (haiku_link(file->name, name_old) && errno != ENOENT)
+		ohshite(_("error creating new backup file '%s'"), name_old);
+#else
 	if (unlink(name_old) && errno != ENOENT)
 		ohshite(_("error removing old backup file '%s'"), name_old);
 	if (link(file->name, name_old) && errno != ENOENT)
 		ohshite(_("error creating new backup file '%s'"), name_old);
+#endif
 
 	free(name_old);
 }
@@ -99,10 +107,17 @@ atomic_file_backup(struct atomic_file *file)
 void
 atomic_file_remove(struct atomic_file *file)
 {
+#ifdef __HAIKU__
+	if (haiku_unlink(file->name_new))
+		ohshite(_("cannot remove '%.250s'"), file->name_new);
+	if (haiku_unlink(file->name) && errno != ENOENT)
+		ohshite(_("cannot remove '%.250s'"), file->name);
+#else
 	if (unlink(file->name_new))
 		ohshite(_("cannot remove '%.250s'"), file->name_new);
 	if (unlink(file->name) && errno != ENOENT)
 		ohshite(_("cannot remove '%.250s'"), file->name);
+#endif
 }
 
 void

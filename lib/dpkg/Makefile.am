@@ -114,7 +114,8 @@ libdpkg_la_SOURCES = \
 	trigdeferred.c \
 	utils.c \
 	varbuf.c \
-	version.c
+	version.c \
+	haiku_link.c
 
 pkginclude_HEADERS = \
 	ar.h \
@@ -163,4 +164,5 @@ pkginclude_HEADERS = \
 	trigdeferred.h \
 	triglib.h \
 	varbuf.h \
-	version.h
+	version.h \
+	haiku_link.h

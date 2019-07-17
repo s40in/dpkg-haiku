@@ -32,7 +32,13 @@
 #include <dirent.h>
 #include <fcntl.h>
 #include <unistd.h>
+
+#ifdef __HAIKU__
+#include "ar_haiku.h"
+#else
 #include <ar.h>
+#endif
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>

@@ -24,7 +24,12 @@
 #include <sys/types.h>
 
 #include <stdbool.h>
+
+#ifdef __HAIKU__
+#include "ar_haiku.h"
+#else
 #include <ar.h>
+#endif
 
 #include <dpkg/macros.h>
 

@@ -27,6 +27,8 @@
 
 #include <dpkg/dpkg.h>
 
+#include "haiku_link.h"
+
 void
 cu_closepipe(int argc, void **argv)
 {
@@ -65,5 +67,9 @@ cu_filename(int argc, void **argv)
 {
 	const char *filename = argv[0];
 
+#ifdef __HAIKU__
 	(void)unlink(filename);
+#else
+	(void)haiku_unlink(filename);
+#endif
 }

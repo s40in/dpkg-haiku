@@ -141,9 +141,16 @@ pkg_infodb_link_multiarch_files(void)
 		varbuf_add_str(&newname, filetype);
 		varbuf_end_str(&newname);
 
+
+#ifdef __HAIKU__
+		if (haiku_link(oldname.buf, newname.buf) && errno != EEXIST)
+			ohshite(_("error creating hard link '%.255s'"),
+			        newname.buf);
+#else			        
 		if (link(oldname.buf, newname.buf) && errno != EEXIST)
 			ohshite(_("error creating hard link '%.255s'"),
 			        newname.buf);
+#endif
 		rename_head = rename_node_new(oldname.buf, newname.buf, rename_head);
 	}
 	pop_cleanup(ehflag_normaltidy); /* closedir */
@@ -162,16 +169,29 @@ cu_abort_db_upgrade(int argc, void **argv)
 	/* Restore the old files if needed and drop the newly created files. */
 	while (rename_head) {
 		next = rename_head->next;
+#ifdef __HAIKU__		
+		if (haiku_link(rename_head->new, rename_head->old) && errno != EEXIST)
+			ohshite(_("error creating hard link '%.255s'"),
+			        rename_head->old);
+		if (haiku_unlink(rename_head->new))
+			ohshite(_("cannot remove '%.250s'"), rename_head->new);
+#else
 		if (link(rename_head->new, rename_head->old) && errno != EEXIST)
 			ohshite(_("error creating hard link '%.255s'"),
 			        rename_head->old);
 		if (unlink(rename_head->new))
 			ohshite(_("cannot remove '%.250s'"), rename_head->new);
+#endif
 		rename_node_free(rename_head);
 		rename_head = next;
 	}
+#ifdef __HAIKU__		
+	if (haiku_unlink(file->name_new) && errno != ENOENT)
+		ohshite(_("cannot remove '%.250s'"), file->name_new);
+#else
 	if (unlink(file->name_new) && errno != ENOENT)
 		ohshite(_("cannot remove '%.250s'"), file->name_new);
+#endif		
 
 	atomic_file_free(file);
 }
@@ -196,8 +216,13 @@ pkg_infodb_unlink_monoarch_files(void)
 
 	while (rename_head) {
 		next = rename_head->next;
+#ifdef __HAIKU__				
+		if (haiku_unlink(rename_head->old))
+			ohshite(_("cannot remove '%.250s'"), rename_head->old);
+#else
 		if (unlink(rename_head->old))
 			ohshite(_("cannot remove '%.250s'"), rename_head->old);
+#endif			
 		rename_node_free(rename_head);
 		rename_head = next;
 	}

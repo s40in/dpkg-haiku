@@ -99,8 +99,13 @@ static void cleanupdates(void) {
 
       for (i=0; i<cdn; i++) {
         strcpy(updatefnrest, cdlist[i]->d_name);
-        if (unlink(updatefnbuf))
+#ifdef __HAIKU__        
+        if (haiku_unlink(updatefnbuf))
           ohshite(_("failed to remove incorporated update file %.255s"),updatefnbuf);
+#else
+		if (unlink(updatefnbuf))
+          ohshite(_("failed to remove incorporated update file %.255s"),updatefnbuf);
+#endif                    
       }
 
       dir_sync_path(updatesdir);
@@ -346,9 +351,13 @@ void modstatdb_checkpoint(void) {
     if (strlen(updatefnrest) > IMPORTANTMAXLEN)
       internerr("modstatdb update entry name '%s' longer than %d",
                 updatefnrest, IMPORTANTMAXLEN);
-
+#ifdef __HAIKU__        
+    if (haiku_unlink(updatefnbuf))
+      ohshite(_("failed to remove my own update file %.255s"),updatefnbuf);
+#else
     if (unlink(updatefnbuf))
       ohshite(_("failed to remove my own update file %.255s"),updatefnbuf);
+#endif      
   }
 
   dir_sync_path(updatesdir);
@@ -365,7 +374,11 @@ void modstatdb_shutdown(void) {
     modstatdb_checkpoint();
     /* Tidy up a bit, but don't worry too much about failure. */
     fclose(importanttmp);
+#ifdef __HAIKU__    
+    (void)haiku_unlink(importanttmpfile);
+#else
     (void)unlink(importanttmpfile);
+#endif    
     varbuf_destroy(&uvb);
     /* Fall through. */
   case msdbrw_needsuperuserlockonly:

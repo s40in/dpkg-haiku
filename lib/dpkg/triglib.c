@@ -448,8 +448,13 @@ edited:
 static void
 trig_file_interests_remove(void)
 {
+#ifdef __HAIKU__  	
+	if (haiku_unlink(triggersfilefile) && errno != ENOENT)
+		ohshite(_("cannot remove '%.250s'"), triggersfilefile);
+#else
 	if (unlink(triggersfilefile) && errno != ENOENT)
 		ohshite(_("cannot remove '%.250s'"), triggersfilefile);
+#endif
 }
 
 static void

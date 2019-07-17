@@ -44,8 +44,13 @@ secure_unlink_statted(const char *pathname, const struct stat *stab)
 			return -1;
 	}
 
+#ifdef __HAIKU__  
+	if (haiku_unlink(pathname))
+		return -1;
+#else
 	if (unlink(pathname))
 		return -1;
+#endif
 
 	return 0;
 }

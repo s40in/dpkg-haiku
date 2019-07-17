@@ -12,14 +12,16 @@
 
 int		haiku_link(const char *toPath, const char *path)
 {
-	printf ("[DEBUG] haiku_link\n toPath=%s \n path=%s \n", toPath, path);
-	return link(toPath, path);
+	printf ("\n[DEBUG] haiku_link\n toPath=%s \n path=%s \n", toPath, path);
+	
+	return symlink(toPath, path);
+	
 	
 }
 
 int		haiku_unlink(const char *name)
 {
-	printf ("[DEBUG] haiku_unlink\n name=%s \n", name);
+	printf ("\n[DEBUG] haiku_unlink\n name=%s \n", name);
 	return unlink(name);
 	
 }

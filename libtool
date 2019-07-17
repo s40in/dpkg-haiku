@@ -1,6 +1,6 @@
 #! /bin/sh
 # Generated automatically by config.status (dpkg) -dirty
-# Libtool was configured on host shredder:
+# Libtool was configured on host haiku64:
 # NOTE: Changes made to this file will be lost: look at ltmain.sh.
 
 # Provide generalized library-building support services.

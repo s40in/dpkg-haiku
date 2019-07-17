@@ -4,9 +4,13 @@
  */
 
 
+#ifndef HAIKU_LINK_H
+#define HAIKU_LINK_H
 
 int		haiku_link(const char *toPath, const char *path);
 
 int		haiku_unlink(const char *name);
 
 int haiku_copy_file(const char *source_file, const char *target_file);
+
+#endif // HAIKU_LINK_H
